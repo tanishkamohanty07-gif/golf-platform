@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import { Trophy, RefreshCw, Lock } from 'lucide-react'
-import { motion } from 'framer-motion'
 import { motion, AnimatePresence } from 'framer-motion'
 export default function DrawClient({ user, profile }) {
   const [drawData, setDrawData] = useState(null)
