@@ -25,7 +25,7 @@ export default function DrawClient({ user, profile }) {
  useEffect(() => {
   if (drawData?.draw) {
     setRevealed(false)
-    const timeout = setTimeout(() => setRevealed(true), 800)
+    const timeout = setTimeout(() => setRevealed(true), 300)
     return () => clearTimeout(timeout)
   }
 }, [drawData])
@@ -127,36 +127,38 @@ export default function DrawClient({ user, profile }) {
               
               <AnimatePresence>
   {revealed && (
-    <div className="flex gap-4 justify-center flex-wrap">
+    <div className="flex gap-6 justify-center flex-wrap">
       {drawData.draw.drawn_numbers.map((num, index) => {
         const matched = drawData.matches?.includes(num)
 
         return (
           <motion.div
-            key={`${num}-${revealed}`} // 🔥 forces re-animation
-            initial={{ y: -150, opacity: 0, scale: 0.2 }}
+            key={`${num}-${revealed}`}
+            initial={{ y: -200, opacity: 0, scale: 0.2 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{
-              delay: index * 0.25,
-              duration: 0.6,
+              delay: index * 0.3,
+              duration: 0.8,
               ease: 'easeOut',
             }}
+            style={{ transformOrigin: 'center' }} // 🔥 force transform
             className={`relative w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold border-2 ${
               matched
-                ? 'border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.8)]'
-                : 'border-white/10 bg-white/[0.05] text-gray-300'
+                ? 'border-emerald-400 bg-emerald-500/30 text-emerald-200'
+                : 'border-white/20 bg-white/[0.08] text-white'
             }`}
           >
             {num}
 
+            {/* 🔥 STRONG GLOW */}
             {matched && (
               <motion.div
-                className="absolute inset-0 rounded-full border border-emerald-400"
-                initial={{ scale: 1, opacity: 0.6 }}
-                animate={{ scale: 1.8, opacity: 0 }}
+                className="absolute inset-0 rounded-full bg-emerald-400/30 blur-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.2, 0.8, 0.2] }}
                 transition={{
-                  duration: 1.2,
+                  duration: 1,
                   repeat: Infinity,
                 }}
               />
