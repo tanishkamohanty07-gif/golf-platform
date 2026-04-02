@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import { Trophy, RefreshCw, Lock } from 'lucide-react'
 import { motion } from 'framer-motion'
-
+import { motion, AnimatePresence } from 'framer-motion'
 export default function DrawClient({ user, profile }) {
   const [drawData, setDrawData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -22,11 +22,13 @@ export default function DrawClient({ user, profile }) {
     fetchDraw()
   }, [])
 
-  useEffect(() => {
-    if (drawData?.draw) {
-      setTimeout(() => setRevealed(true), 800)
-    }
-  }, [drawData])
+ useEffect(() => {
+  if (drawData?.draw) {
+    setRevealed(false)
+    const timeout = setTimeout(() => setRevealed(true), 400)
+    return () => clearTimeout(timeout)
+  }
+}, [drawData])
 
   const userScores = drawData?.scores || []
   const hasSubmittedAll = userScores.length >= 5
@@ -122,47 +124,49 @@ export default function DrawClient({ user, profile }) {
                   Pool: £{drawData.draw.prize_pool_total}
                 </span>
               </div>
+              
+              <AnimatePresence>
+  {revealed && (
+    <div className="flex gap-4 justify-center flex-wrap">
+      {drawData.draw.drawn_numbers.map((num, index) => {
+        const matched = drawData.matches?.includes(num)
 
-              {revealed && (
-                <div className="flex gap-4 justify-center flex-wrap">
-                  {drawData.draw.drawn_numbers.map((num, index) => {
-                    const matched = drawData.matches?.includes(num)
+        return (
+          <motion.div
+            key={`${num}-${revealed}`} // 🔥 forces re-animation
+            initial={{ y: -150, opacity: 0, scale: 0.2 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              delay: index * 0.25,
+              duration: 0.6,
+              ease: 'easeOut',
+            }}
+            className={`relative w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold border-2 ${
+              matched
+                ? 'border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.8)]'
+                : 'border-white/10 bg-white/[0.05] text-gray-300'
+            }`}
+          >
+            {num}
 
-                    return (
-                      <motion.div
-                        key={num}
-                        initial={{ y: -120, opacity: 0, scale: 0.3 }}
-                        animate={{ y: 0, opacity: 1, scale: 1 }}
-                        transition={{
-                          delay: index * 0.25,
-                          type: 'spring',
-                          stiffness: 260,
-                          damping: 14,
-                        }}
-                        className={`relative w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold border-2 ${
-                          matched
-                            ? 'border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.8)]'
-                            : 'border-white/10 bg-white/[0.05] text-gray-300'
-                        }`}
-                      >
-                        {num}
-
-                        {matched && (
-                          <motion.div
-                            className="absolute inset-0 rounded-full border border-emerald-400"
-                            initial={{ scale: 1, opacity: 0.6 }}
-                            animate={{ scale: 1.7, opacity: 0 }}
-                            transition={{
-                              duration: 1.2,
-                              repeat: Infinity,
-                            }}
-                          />
-                        )}
-                      </motion.div>
-                    )
-                  })}
-                </div>
-              )}
+            {matched && (
+              <motion.div
+                className="absolute inset-0 rounded-full border border-emerald-400"
+                initial={{ scale: 1, opacity: 0.6 }}
+                animate={{ scale: 1.8, opacity: 0 }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                }}
+              />
+            )}
+          </motion.div>
+        )
+      })}
+    </div>
+  )}
+</AnimatePresence>
             </div>
 
             {/* RESULT */}
