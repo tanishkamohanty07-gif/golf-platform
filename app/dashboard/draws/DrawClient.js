@@ -16,7 +16,7 @@ export default function DrawClient({ user, profile }) {
     setDrawData(data)
     setLoading(false)
   }
-
+         
   useEffect(() => {
     fetchDraw()
   }, [])
