@@ -22,19 +22,21 @@ export default function LoginPage() {
 
     const supabase = createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: form.email,
       password: form.password,
     })
 
-    setLoading(false)
+    console.log(data, error) // debug
 
     if (error) {
       setError(error.message)
+      setLoading(false)
       return
     }
 
-    router.push('/dashboard')
+    // ✅ IMPORTANT FIX
+    router.replace('/dashboard')
     router.refresh()
   }
 
@@ -42,7 +44,6 @@ export default function LoginPage() {
     <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
 
-        {/* Brand */}
         <div className="text-center mb-8">
           <span className="text-2xl">⛳</span>
           <h1 className="text-white text-2xl font-bold mt-2">Welcome back</h1>
@@ -63,7 +64,7 @@ export default function LoginPage() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full bg-white/[0.04] border border-white/[0.1] text-white rounded-lg px-4 py-3 text-sm placeholder-gray-600 focus:outline-none focus:border-emerald-500/60 transition-colors"
+                className="w-full bg-white/[0.04] border border-white/[0.1] text-white rounded-lg px-4 py-3 text-sm placeholder-gray-600 focus:outline-none focus:border-emerald-500/60"
               />
             </div>
 
@@ -78,7 +79,7 @@ export default function LoginPage() {
                 onChange={handleChange}
                 required
                 placeholder="Your password"
-                className="w-full bg-white/[0.04] border border-white/[0.1] text-white rounded-lg px-4 py-3 text-sm placeholder-gray-600 focus:outline-none focus:border-emerald-500/60 transition-colors"
+                className="w-full bg-white/[0.04] border border-white/[0.1] text-white rounded-lg px-4 py-3 text-sm placeholder-gray-600 focus:outline-none focus:border-emerald-500/60"
               />
             </div>
 
@@ -91,7 +92,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-lg text-sm transition-all duration-200"
+              className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-semibold rounded-lg text-sm"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -101,7 +102,7 @@ export default function LoginPage() {
 
         <p className="text-center text-gray-600 text-sm mt-6">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-emerald-400 hover:text-emerald-300 transition-colors">
+          <Link href="/signup" className="text-emerald-400 hover:text-emerald-300">
             Create one
           </Link>
         </p>
