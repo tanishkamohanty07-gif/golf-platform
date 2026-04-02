@@ -25,7 +25,7 @@ export default function DrawClient({ user, profile }) {
  useEffect(() => {
   if (drawData?.draw) {
     setRevealed(false)
-    const timeout = setTimeout(() => setRevealed(true), 400)
+    const timeout = setTimeout(() => setRevealed(true), 800)
     return () => clearTimeout(timeout)
   }
 }, [drawData])
